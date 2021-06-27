@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.7/js/min/perfect-scrollbar.jquery.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/jquery.perfect-scrollbar/0.6.7/css/perfect-scrollbar.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="white.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="board-container">
+            <div class="tools">
+                <div class="toolbar">
+                    <div class="tool active-tool" id="pencil">
+                        <div class="tool-img">
+                            <img src="./pen-tool.svg" alt="">
+                        </div>
+                        <div class="tool-options" id="pencil-options">
+                            <div class="tool-size">
+                                <input type="range" id="pencil-size" value="1" , min="1" , max="40">
+                            </div>
+                            <div class="tool-color">
+                                <div class="red"></div>
+                                <div class="blue"></div>
+                                <div class="yellow"></div>
+                                <div class="black"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tool" id="eraser">
+                        <div class="tool-img">
+                            <img src="./eraser.svg" alt="">
+                        </div>
+                        <div class="tool-options" id="eraser-options">
+                            <div class="tool-size">
+                                <input type="range" id="eraser-size" value="1" , min="1" , max="40">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tool" id="stickyTool">
+                        <div class="tool-img">
+                            <img src="./sticky-note.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="tool">
+                        <label for="img-upload" id="img-label">
+                            <div class="tool-img">
+                                <img src="./gallery.svg" alt="">
+                            </div>
+                            <input type="file" id="img-upload" style="display: none;">
+                        </label>
+                    </div>
+                    <div class="tool" id="download-img">
+                        <div class="tool-img">
+                            <img src="./cloud-computing.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="tool" id="undo">
+                        <div class="tool-img">
+                            <img src="./undo.svg" alt="">
+                        </div>
+                    </div>
+                    <div class="tool" id="redo">
+                        <div class="tool-img">
+                            <img src="./redo.svg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="drawing-area">
+                <canvas id="canvas"></canvas>
+            </div>
+        </div>
+
+        <div class="chat-container">
+
+            <div class="user-name-input">
+                <input type="text" id="user-name" placeholder="Enter Name">
+                <div class="join-chat">Join Chat</div>
+            </div>
+
+            <div class="chat-content hide">
+                <div class="chat-box">
+                    <!-- <div class="chat right">
+                    <div class="chat-name">Steve</div>
+                    <div class="chat-text">Hey Avengers</div>
+                </div>
+                <div class="chat left">
+                    <div class="chat-name">Tony</div>
+                    <div class="chat-text">Hey everyone</div>
+                </div>
+
+                <div class="chat join">Steve joined the chat</div>
+                <div class="chat join">Steve joined the chat</div>
+                <div class="chat leave">Tony joined the chat</div>
+                <div class="chat leave">Tony joined the chat</div>
+
+                <div class="chat left">
+                    <div class="chat-name">Tony</div>
+                    <div class="chat-text">Hey everyone</div>
+                </div>
+                <div class="chat left">
+                    <div class="chat-name">Tony</div>
+                    <div class="chat-text">Hey everyone</div>
+                </div> -->
+                </div>
+                <div class="chat-input">
+                    <div class="audio-btn"><img src="./voice.png"></div>
+                    <input type="text" id="chat-input" placeholder="Enter your message" />
+                    <div class="send" id="send">
+                        <img src="./send.png" alt="">
+                        <!-- <i class="fas fa-paper-plane"></i> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"
+        integrity="sha512-iZIBSs+gDyTH0ZhUem9eQ1t4DcEn2B9lHxfRMeGQhyNdSUz+rb+5A3ummX6DQTOIs1XK0gOteOg/LPtSo9VJ+w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="./whiteScript.js"></script>
+    <script src="./tools.js"></script>
+    <script src="./sticky.js"></script>
+    <script src="./image.js"></script>
+    <script src="./util.js"></script>
+    <script>
+        const socket = io.connect("http://localhost:3000");
+
+
+        socket.on("md", (point) => {
+            ctx.strokeStyle = point.penColor;
+            ctx.lineWidth = point.penWidth;
+            ctx.beginPath();
+            ctx.moveTo(point.x, point.y);
+        })
+        socket.on("mm", (point) => {
+            ctx.strokeStyle = point.penColor;
+            ctx.lineWidth = point.penWidth;
+            ctx.lineTo(point.x, point.y);
+            ctx.stroke();
+        })
+    </script>
+    <script src="./script.js"></script>
+    <script src="./socket.js"></script>
+</body>
+
+</html>
